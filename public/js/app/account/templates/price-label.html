@@ -1,0 +1,12 @@
+<div class="price-label-modal">
+  <div class="modal-header">
+    <button class="close" ng-click="closePriceLabelModal()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">{{'CLOSE' | translate}}</span>
+    </button>
+    <h4 class="modal-title" id="myModalLabel">{{'WISHLIST_TOTAL_PRICE' | translate}}</h4>
+  </div>
+  <div class="modal-body" stop-event="touchend">
+    {{wishlistTotalPrice}}
+  </div>
+</div>

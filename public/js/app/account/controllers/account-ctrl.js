@@ -13,9 +13,11 @@
 
 angular.module('ds.account')
 
-    .controller('AccountCtrl', ['$scope', 'addresses', 'account', 'orders', 'OrderListSvc', 'AccountSvc', '$uibModal', 'GlobalData', '$translate',
-
-        function ($scope, addresses, account, orders, OrderListSvc, AccountSvc, $uibModal, GlobalData, $translate) {
+  .controller('AccountCtrl', ['$scope', 'addresses', 'account', 'orders', 'wishlist',
+    'OrderListSvc', 'AccountSvc', 'PriceSvc', 'ProductSvc',
+    '$uibModal', 'GlobalData', '$translate', '$filter',
+    function ($scope, addresses, account, orders, wishlist, OrderListSvc, AccountSvc,
+      PriceSvc, ProductSvc, $uibModal, GlobalData, $translate, $filter) {
 
             var self = this;
             self.allOrdersLoaded = false;
@@ -32,6 +34,7 @@ angular.module('ds.account')
             $scope.account = account;
             $scope.addresses = addresses;
             $scope.orders = orders;
+            $scope.wishlistItems = [];
             $scope.defaultAddress = getDefaultAddress();
 
             // show more or less addresses.
@@ -45,6 +48,15 @@ angular.module('ds.account')
             $scope.showAllOrdersButton = true;
             $scope.showOrderButtons = ($scope.orders.length >= $scope.showOrdersDefault);
             $scope.showOrdersFilter = $scope.showOrdersDefault;
+
+            // wishlist related attributes
+            $scope.priceLabelModal = null;
+            $scope.wishlistTotalPrice = '';
+            // show more or less wishlist items.
+            $scope.showWishlistDefault = 5;
+            $scope.showWishlistButtons = false;
+            $scope.showAllWishlistButton = true;
+            $scope.showWishlistFilter = $scope.showWishlistDefault;
 
             var extractServerSideErrors = function (response) {
                 var errors = [];
@@ -210,11 +222,71 @@ angular.module('ds.account')
                 $scope.showAddressButtons = ($scope.addresses.length > $scope.showAddressDefault);
             };
 
+            $scope.showTotalPrice = function () {
+              $scope.priceLabelModal = $uibModal.open({
+                templateUrl: './js/app/account/templates/price-label.html',
+                scope: $scope,
+                backdrop: 'static'
+              });
+            };
+
+            $scope.closePriceLabelModal = function () {
+              $scope.priceLabelModal.close();
+            };
+
+            $scope.showAllWishlist = function () {
+                $scope.showAllWishlistButton = !$scope.showAllWishlistButton;
+                $scope.showWishlistFilter = $scope.showAllWishlistButton ? $scope.showWishlistDefault : $scope.wishlistItems.length;
+                $scope.showWishlistButtons = ($scope.wishlistItems.length > $scope.showWishlistDefault);
+            };
+
             /*
              need to set the currency symbol for each order
              */
             angular.forEach($scope.orders, function (order) {
                 order.currencySymbol = GlobalData.getCurrencySymbol(order.currency);
             });
+
+            if (wishlist && wishlist.items && wishlist.items.length) {
+              var productIds = wishlist.items.map(function(wishlistItem) {
+                return wishlistItem.product;
+              });
+
+              var productQuerySpec = 'id:(' + productIds + ')';
+
+              var query = {
+                pageNumber: 1,
+                q: productQuerySpec
+              };
+
+              ProductSvc.queryProductList(query).then(function(response) {
+                var products = response;
+                PriceSvc.getPrices({
+                  productId: _.map(products, 'id').join(),
+                  currency: GlobalData.getCurrency(),
+                  effectiveDate: new Date().toISOString()
+                }).then(function(response) {
+                  $scope.wishlistItems = wishlist.items.map(function(wishlistItem) {
+                    var product = _.find(products,{id: wishlistItem.product});
+                    var price = _.find(response, {productId: wishlistItem.product});
+                    return _.assign(wishlistItem, {
+                      productName: product ? product.name : '',
+                      price: price.effectiveAmount,
+                      currencySymbol: GlobalData.getCurrencySymbol(price.currency)
+                    });
+                  });
+
+                  $scope.showWishlistButtons = $scope.wishlistItems.length > $scope.showWishlistDefault;
+                  $scope.wishlistTotalPrice = $filter('currency')(
+                  _.reduce(_.map($scope.wishlistItems, function(item) {
+                      return Number.parseFloat(item.price) * item.amount;
+                    }),
+                    function(prev, next) {
+                        return Number.parseFloat(prev) + Number.parseFloat(next);
+                    }
+                  ), $scope.wishlistItems[0].currencySymbol);
+                });
+              });
+            }
 
         }]);

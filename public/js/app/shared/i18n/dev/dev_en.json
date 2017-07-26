@@ -360,6 +360,8 @@
     "BUY": "Buy",
     //XBUT
     "ADD_TO_CART": "Add to Cart",
+    //XBUT
+    "ADD_TO_WISHLIST": "Add to Wishlist",
     //XMSG
     "PRODUCTS_ADDED_TO_CART": "product(s) successfully added to your cart",
     //XTIT
@@ -384,14 +386,16 @@
     "NO_LIMIT": "No Limit",
     //XMSG
     "ERROR_ADDING_TO_CART": "Add to Cart was not successful.  Please try again.",
-    
     //XTBS
     "DESCRIPTION_TAB": "Description",
     //XTBS
     "DETAILS_TAB": "Details",
-
     //XBUT
     "MORE": "More",
+    //XMSG
+    "PRODUCTS_ADDED_TO_WISHLIST": "product(s) successfully added to your wishlist",
+    //XMSG
+    "ERROR_ADDING_TO_WISHLIST": "Add to wislist was not successful.  Please try again.",
 
     //XFLD
     //-------------------------------------------------
@@ -579,6 +583,16 @@
     "EDIT_EMAIL_ALREADY_IN_USE": "This email is already in use. Try again",
     //XMSG
     "EDIT_EMAIL_SOMETHING_WENT_WRONG": "Something went wrong. Try again",
+    //XFLD
+    "WISHLIST": "Wishlist",
+    //XFLD
+    "PRODUCT": "PRODUCT",
+    //XFLD
+    "PRICE": "PRICE",
+    //XMSG
+    "WISHLIST_EMPTY": "Your wishlist is empty",
+    //XFLD
+    "WISHLIST_TOTAL_PRICE": "Total price of your wishlist",
 
 
     //XFLD

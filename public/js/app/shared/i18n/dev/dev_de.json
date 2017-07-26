@@ -347,6 +347,8 @@
     "BUY": "Kaufen",
     //XBUT
     "ADD_TO_CART": "In den Warenkorb",
+    //XBUT
+    "ADD_TO_WISHLIST": "Zur Wunschliste hinzufügen",
     //XMSG
     "PRODUCTS_ADDED_TO_CART": "Produkt(e) erfolgreich zum Warenkorb hinzugefügt",
     //XTIT
@@ -377,7 +379,11 @@
     "DETAILS_TAB": "Details",
     //XBUT
     "MORE": "Mehr",
-    //XFLD
+    //XMSG
+    "PRODUCTS_ADDED_TO_WISHLIST": "product(s) successfully added to your wishlist",
+    //XMSG
+    "ERROR_ADDING_TO_WISHLIST": "Add to wislist was not successful.  Please try again.",
+
     //-------------------------------------------------
     // Product List Page
     //-------------------------------------------------
@@ -556,6 +562,16 @@
     //XMSG
     "EDIT_EMAIL_SOMETHING_WENT_WRONG": "Es ist ein Problem aufgetreten. Versuchen Sie es noch einmal",
     //XFLD
+    "WISHLIST": "Wishlist",
+    //XFLD
+    "PRODUCT": "PRODUCT",
+    //XFLD
+    "PRICE": "PRICE",
+    //XMSG
+    "WISHLIST_EMPTY": "Your wishlist is empty",
+    //XFLD
+    "WISHLIST_TOTAL_PRICE": "Total price of your wishlist",
+
     //-------------------------------------------------
     // Login, password, signup
     //-------------------------------------------------

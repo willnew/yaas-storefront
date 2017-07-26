@@ -287,6 +287,13 @@ angular.module('ds.router', [])
                                     return [];
                                 }
                             );
+                        }],
+                        wishlist: ['WishlistSvc', 'GlobalData', function(WishlistSvc, GlobalData) {
+                          return WishlistSvc.getOne(GlobalData.customerAccount.id).then(
+                            function (response) {
+                              return response.id ? response : {};
+                            }
+                          );
                         }]
                     },
                     data: {

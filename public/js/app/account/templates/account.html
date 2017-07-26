@@ -101,10 +101,50 @@
         <button class="btn btn-link" ng-show="showAllOrdersButton" ng-click="showAllOrders()">{{'SHOW_ALL' | translate}} <span class="glyphicon glyphicon-chevron-down"/></button>
         <button class="btn btn-link" ng-show="!showAllOrdersButton" ng-click="showAllOrders()">{{'SHOW_LESS' | translate}} <span class="glyphicon glyphicon-chevron-up"/></button>
       </div>
-
-      
     </div>
+  </section>
 
+  <section class="mediumgray" ng-cloak>
+    <div class="container-fluid">
+      <div class="section-headline clearfix">
+        <h2 class="pull-left">{{'WISHLIST' | translate}}</h2>
+        <button ng-if="wishlistItems.length" class="btn btn-secondary btn-md pull-right" ng-click="showTotalPrice()">
+          {{'TOTAL_PRICE' | translate}}
+        </button>
+      </div>
+      <div ng-if="wishlistItems.length"  class="table-responsive hidden-sm hidden-xs">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{{'DATE' | translate}}</th>
+              <th>{{'PRODUCT' | translate}}</th>
+              <th>{{'PRICE' | translate}}</th>
+              <th>{{'QTY' | translate}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="wishlistItem in wishlistItems | limitTo: showWishlistFilter">
+              <td>{{wishlistItem.createdAt | date: 'medium'}}</td>
+              <td>{{wishlistItem.productName}}</td>
+              <td>{{wishlistItem.price | currency: wishlistItem.currencySymbol}}</td>
+              <td>{{wishlistItem.amount}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div ng-if="!wishlistItems.length">
+        {{'WISHLIST_EMPTY' | translate}}
+      </div>
+
+      <div class="text-center" ng-if="showWishlistButtons">
+        <button class="btn btn-link" ng-show="showAllWishlistButton" ng-click="showAllWishlist()">
+          {{'SHOW_ALL' | translate}} <span class="glyphicon glyphicon-chevron-down"/>
+        </button>
+        <button class="btn btn-link" ng-show="!showAllWishlistButton" ng-click="showAllWishlist()">
+          {{'SHOW_LESS' | translate}} <span class="glyphicon glyphicon-chevron-up"/>
+        </button>
+      </div>
+    </div>
   </section>
 
 </div>

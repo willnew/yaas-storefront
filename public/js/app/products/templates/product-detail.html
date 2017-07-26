@@ -86,6 +86,12 @@
                                         ng-disabled="!buyButtonEnabled">{{'ADD_TO_CART' | translate}}</button>
                                 </div>
 
+                                <!-- add to wishlist -->
+                                <div class="col-md-8 col-md-offset-2">
+                                    <button id="add-wishlist-button" type="button" class="btn btn-primary btn-block buyButton" ng-click="addToWishlist()"
+                                        ng-disabled="!attentButtonEnabled">{{'ADD_TO_WISHLIST' | translate}}</button>
+                                </div>
+
                                 <!-- product fees -->
                                 <div class="col-md-8 col-md-offset-2">
                                     <product-fees fees="productFees"></product-fees>

@@ -17,8 +17,8 @@ angular.module('ds.products')
      * Listens to the 'cart:updated' event.  Once the item has been added to the cart, and the updated
      * cart information has been retrieved from the service, the 'cart' view will be shown.
      */
-    .controller('ProductDetailCtrl', ['$scope', '$rootScope', '$location', 'CartSvc', 'product', 'lastCatId', 'variantId', 'GlobalData', 'CategorySvc','$filter', '$uibModal', 'shippingZones', 'Notification', 'ProductExtensionHelper', 'ProductVariantsHelper', 'variants', 'variantPrices', 'productFactory', 'FeeSvc',
-        function($scope, $rootScope, $location, CartSvc, product, lastCatId, variantId, GlobalData, CategorySvc, $filter, $uibModal, shippingZones, Notification, ProductExtensionHelper, ProductVariantsHelper, variants, variantPrices, productFactory, FeeSvc) {
+    .controller('ProductDetailCtrl', ['$scope', '$rootScope', '$location', 'CartSvc', 'product', 'lastCatId', 'variantId', 'GlobalData', 'CategorySvc','$filter', '$uibModal', 'shippingZones', 'Notification', 'ProductExtensionHelper', 'ProductVariantsHelper', 'variants', 'variantPrices', 'productFactory', 'FeeSvc', 'WishlistSvc',
+        function($scope, $rootScope, $location, CartSvc, product, lastCatId, variantId, GlobalData, CategorySvc, $filter, $uibModal, shippingZones, Notification, ProductExtensionHelper, ProductVariantsHelper, variants, variantPrices, productFactory, FeeSvc, WishlistSvc) {
             var modalInstance;
 
             $scope.activeTab = 'description';
@@ -94,6 +94,7 @@ angular.module('ds.products')
             //input default values must be defined in controller, not html, if tied to ng-model
             $scope.productDetailQty = 1;
             $scope.buyButtonEnabled = true;
+            $scope.attentButtonEnabled = !!GlobalData.customerAccount.id;
 
             $scope.showShippingRates = function(){
 
@@ -150,11 +151,73 @@ angular.module('ds.products')
                 });
             };
 
+            $scope.updateExistingWishlist = function(wishlist) {
+              if (_.find(wishlist.items, {'product': product.product.id})) {
+                _.each(wishlist.items, function(wishlistItem) {
+                  if (wishlistItem.product === product.product.id) {
+                    wishlistItem.amount += $scope.productDetailQty;
+                  }
+                });
+              } else {
+                wishlist.items.push({
+                  product: product.product.id,
+                  amount: $scope.productDetailQty,
+                  createdAt: (new Date()).valueOf()
+                });
+              }
+
+              wishlist.put().then(function() {
+                $scope.attentButtonEnabled = true;
+                var productAddedToWishlist = $filter('translate')('PRODUCTS_ADDED_TO_WISHLIST');
+                Notification.success({message: $scope.productDetailQty + ' ' + productAddedToWishlist, delay: 3000});
+              }, function() {
+                $scope.attentButtonEnabled = true;
+                $scope.error = 'ERROR_ADDING_TO_WISHLIST';
+              });
+            };
+
+            $scope.generateWishlistForCustomer = function() {
+              var wishlist = {
+                id: GlobalData.customerAccount.id,
+                owner: GlobalData.customerAccount.id,
+                title: GlobalData.customerAccount.id + '\'s wishlist',
+                items: [{
+                  // I'm not use $scope.product because it may cause error
+                  // if there're many variants for one product
+                  product: product.product.id,
+                  amount: $scope.productDetailQty,
+                  createdAt: (new Date()).valueOf()
+                }]
+              };
+              WishlistSvc.create(wishlist).then(function() {
+                $scope.attentButtonEnabled = true;
+                var productAddedToWishlist = $filter('translate')('PRODUCTS_ADDED_TO_WISHLIST');
+                Notification.success({message: $scope.productDetailQty + ' ' + productAddedToWishlist, delay: 3000});
+              }, function() {
+                $scope.attentButtonEnabled = true;
+                $scope.error = 'ERROR_ADDING_TO_WISHLIST';
+              });
+            };
+
+            $scope.addToWishlist = function() {
+              $scope.attentButtonEnabled = false;
+
+              WishlistSvc.getOne(GlobalData.customerAccount.id).then(
+                function (response) {
+                  if (response.id) {
+                    $scope.updateExistingWishlist(response);
+                  } else {
+                    $scope.generateWishlistForCustomer();
+                  }
+                }
+              );
+            };
+
             $scope.changeQty = function () {
                 if (!$scope.productDetailQty){
-                    $scope.buyButtonEnabled = false;
+                    $scope.buyButtonEnabled = $scope.attentButtonEnabled = false;
                 } else {
-                    $scope.buyButtonEnabled = true;
+                    $scope.buyButtonEnabled = $scope.attentButtonEnabled = true;
                 }
             };
 
